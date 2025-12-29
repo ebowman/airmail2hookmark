@@ -1,0 +1,28 @@
+# Xcode
+build/
+DerivedData/
+*.xcuserstate
+xcuserdata/
+
+# Swift Package Manager
+.build/
+.swiftpm/
+Package.resolved
+
+# macOS
+.DS_Store
+*.swp
+*~
+
+# Built app bundle (build from source)
+Airmail2Hookmark.app/
+
+# Development artifacts
+RESEARCH-FINDINGS.md
+SPARC-PLAN.md
+
+# Claude Code / development tools
+.claude/
+.hive-mind/
+.swarm/
+claude-flow
