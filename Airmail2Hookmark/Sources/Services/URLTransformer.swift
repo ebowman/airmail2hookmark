@@ -8,16 +8,20 @@ enum URLTransformError: Error, Equatable {
     case invalidURLConstruction
 }
 
-/// Transforms Airmail URLs to Hookmark URLs
+/// Transforms Airmail URLs to Hookmark or Apple Mail URLs
 enum URLTransformer {
-    /// Transforms an airmail: URL to a hook://email/ URL
+    /// Transforms an airmail: URL to a hook://email/ or message:// URL
     ///
     /// Input format: `airmail://message?mail={email}&messageid={id}`
-    /// Output format: `hook://email/{id}`
+    /// Output formats:
+    /// - Hookmark: `hook://email/{id}`
+    /// - Apple Mail: `message://%3C{id}%3E`
     ///
-    /// - Parameter airmailURL: The airmail URL to transform
-    /// - Returns: A Result containing either the transformed Hookmark URL or an error
-    static func transform(airmailURL: URL) -> Result<URL, URLTransformError> {
+    /// - Parameters:
+    ///   - airmailURL: The airmail URL to transform
+    ///   - scheme: The target URI scheme (defaults to Hookmark)
+    /// - Returns: A Result containing either the transformed URL or an error
+    static func transform(airmailURL: URL, scheme: URIScheme = .hookmark) -> Result<URL, URLTransformError> {
         // Validate scheme
         guard airmailURL.scheme?.lowercased() == "airmail" else {
             return .failure(.invalidScheme)
@@ -39,14 +43,21 @@ enum URLTransformer {
             return .failure(.emptyMessageId)
         }
 
-        // Construct Hookmark URL
+        // Construct output URL based on selected scheme
         // The messageid is already URL-encoded from the original URL, so we use it as-is
-        let hookmarkURLString = "hook://email/\(messageId)"
+        let outputURLString: String
+        switch scheme {
+        case .hookmark:
+            outputURLString = "hook://email/\(messageId)"
+        case .applemail:
+            // Apple Mail message: scheme uses angle brackets around the message ID
+            outputURLString = "message://%3C\(messageId)%3E"
+        }
 
-        guard let hookmarkURL = URL(string: hookmarkURLString) else {
+        guard let outputURL = URL(string: outputURLString) else {
             return .failure(.invalidURLConstruction)
         }
 
-        return .success(hookmarkURL)
+        return .success(outputURL)
     }
 }

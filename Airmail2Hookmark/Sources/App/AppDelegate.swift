@@ -23,11 +23,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func handleAirmailURL(_ url: URL) {
-        let result = URLTransformer.transform(airmailURL: url)
+        let selectedScheme = PreferencesManager.shared.selectedScheme
+        let result = URLTransformer.transform(airmailURL: url, scheme: selectedScheme)
 
         switch result {
-        case .success(let hookmarkURL):
-            NSWorkspace.shared.open(hookmarkURL)
+        case .success(let outputURL):
+            NSWorkspace.shared.open(outputURL)
 
         case .failure(let error):
             showErrorAlert(for: error, originalURL: url)

@@ -3,7 +3,7 @@
 //  Airmail2HookmarkTests
 //
 //  Unit tests for the URLTransformer service that converts
-//  airmail: URLs to hook: URLs.
+//  airmail: URLs to hook: or message: URLs.
 //
 
 import XCTest
@@ -11,7 +11,7 @@ import XCTest
 
 final class URLTransformerTests: XCTestCase {
 
-    // MARK: - Success Cases
+    // MARK: - Hookmark Scheme Tests (Default)
 
     func testValidAirmailURLWithMessageIdReturnsCorrectHookURL() throws {
         // Given
@@ -347,5 +347,113 @@ final class URLTransformerTests: XCTestCase {
         // Then
         let hookURL = try result.get()
         XCTAssertEqual(hookURL.path, "/\(messageId)")
+    }
+
+    // MARK: - Apple Mail Scheme Tests
+
+    func testAppleMailSchemeReturnsCorrectMessageURL() throws {
+        // Given
+        let airmailURL = URL(string: "airmail://message?messageid=ABC123")!
+
+        // When
+        let result = URLTransformer.transform(airmailURL: airmailURL, scheme: .applemail)
+
+        // Then
+        let messageURL = try result.get()
+        XCTAssertEqual(messageURL.absoluteString, "message://%3CABC123%3E")
+    }
+
+    func testAppleMailSchemeWithEncodedCharacters() throws {
+        // Given: messageid contains URL-encoded characters
+        let encodedMessageId = "AAMk%2BXYZ%3D%3D"
+        let airmailURL = URL(string: "airmail://message?messageid=\(encodedMessageId)")!
+
+        // When
+        let result = URLTransformer.transform(airmailURL: airmailURL, scheme: .applemail)
+
+        // Then: The encoding should be preserved, wrapped in angle brackets
+        let messageURL = try result.get()
+        XCTAssertEqual(messageURL.absoluteString, "message://%3C\(encodedMessageId)%3E")
+    }
+
+    func testAppleMailSchemeWithMailParameter() throws {
+        // Given: URL contains both mail and messageid parameters
+        let airmailURL = URL(string: "airmail://message?mail=user%40example.com&messageid=MSG456")!
+
+        // When
+        let result = URLTransformer.transform(airmailURL: airmailURL, scheme: .applemail)
+
+        // Then: mail parameter is ignored, messageid is used
+        let messageURL = try result.get()
+        XCTAssertEqual(messageURL.absoluteString, "message://%3CMSG456%3E")
+    }
+
+    func testAppleMailSchemeRealWorldExample() throws {
+        // Given: Real-world example from CLAUDE.md
+        let messageId = "AAMkADg1ZGM0ZGE3LWMxZDctNDBhOC04OWNhLTZhM2VlNjNhYzIxNQBGAAAAAADtYuK5T8IaS7TB7_AKKA9FBwBcJ6m9i2jPSbO7OUxjrFzMAAAAAAEMAABcJ6m9i2jPSbO7OUxjrFzMAAFRe7JEAAA%3D"
+        let airmailURL = URL(string: "airmail://message?mail=joe%40user.com&messageid=\(messageId)")!
+
+        // When
+        let result = URLTransformer.transform(airmailURL: airmailURL, scheme: .applemail)
+
+        // Then
+        let messageURL = try result.get()
+        XCTAssertEqual(messageURL.absoluteString, "message://%3C\(messageId)%3E")
+    }
+
+    func testAppleMailSchemeOutputHasCorrectScheme() throws {
+        // Given
+        let airmailURL = URL(string: "airmail://message?messageid=TEST")!
+
+        // When
+        let result = URLTransformer.transform(airmailURL: airmailURL, scheme: .applemail)
+
+        // Then
+        let messageURL = try result.get()
+        XCTAssertEqual(messageURL.scheme, "message")
+    }
+
+    func testAppleMailSchemeMissingMessageIdReturnsError() {
+        // Given: URL without messageid parameter
+        let airmailURL = URL(string: "airmail://message?mail=user%40example.com")!
+
+        // When
+        let result = URLTransformer.transform(airmailURL: airmailURL, scheme: .applemail)
+
+        // Then
+        switch result {
+        case .success:
+            XCTFail("Expected error for missing messageid parameter")
+        case .failure(let error):
+            XCTAssertEqual(error, .missingMessageId)
+        }
+    }
+
+    // MARK: - Explicit Hookmark Scheme Tests
+
+    func testExplicitHookmarkSchemeReturnsCorrectURL() throws {
+        // Given
+        let airmailURL = URL(string: "airmail://message?messageid=ABC123")!
+
+        // When
+        let result = URLTransformer.transform(airmailURL: airmailURL, scheme: .hookmark)
+
+        // Then
+        let hookURL = try result.get()
+        XCTAssertEqual(hookURL.absoluteString, "hook://email/ABC123")
+    }
+
+    func testDefaultSchemeMatchesExplicitHookmark() throws {
+        // Given
+        let airmailURL = URL(string: "airmail://message?messageid=ABC123")!
+
+        // When
+        let defaultResult = URLTransformer.transform(airmailURL: airmailURL)
+        let explicitResult = URLTransformer.transform(airmailURL: airmailURL, scheme: .hookmark)
+
+        // Then
+        let defaultURL = try defaultResult.get()
+        let explicitURL = try explicitResult.get()
+        XCTAssertEqual(defaultURL.absoluteString, explicitURL.absoluteString)
     }
 }
