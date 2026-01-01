@@ -4,9 +4,11 @@ A utility for macOS, iOS, and iPadOS that intercepts `airmail:` URIs and redirec
 
 ## Background
 
-[Airmail](https://airmailapp.com/) provides useful deep linking to emails via `airmail:` URIs. If you've been using [Hookmark](https://hookproductivity.com/) to create links to emails in Airmail and later switch to a different email client, those links would break.
+[Airmail](https://airmailapp.com/) provides useful deep linking to emails via `airmail:` URIs. Once you start using these links extensively—in notes, documents, task managers, and other apps—you become deeply committed to Airmail as your email client. Unfortunately, Airmail has become buggy and isn't really evolving, but switching away is painful because all those `airmail:` links would break.
 
-This utility registers as the handler for the `airmail:` URL scheme and silently redirects to either:
+[Hookmark](https://hookproductivity.com/) offers its own email linking scheme (`hook://email/`) that's email-client agnostic—you can configure Hookmark to open emails in Airmail, Apple Mail, MailMate, Fastmail, or other clients. However, Hookmark won't intercept your existing `airmail:` URIs.
+
+**That's where this utility comes in.** Install Airmail2Hookmark on your Mac, iPhone, and iPad, then uninstall Airmail. This app takes over responsibility for handling `airmail:` URIs and redirects them to either:
 - **Hookmark** (`hook://email/{id}`) - which can open the email in your configured mail client
 - **Apple Mail** (`message://%3C{id}%3E`) - which opens the email directly in Apple Mail
 
