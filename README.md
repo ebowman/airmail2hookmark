@@ -184,6 +184,115 @@ After the initial USB setup, you can deploy wirelessly:
 
 ---
 
+## App Store Distribution
+
+If you want to avoid Developer Mode on iOS devices, or distribute the app more broadly, you can publish to the App Stores.
+
+### Requirements
+
+- **Apple Developer Program membership** ($99/year) - [Sign up here](https://developer.apple.com/programs/)
+- Covers both Mac App Store and iOS App Store
+
+### Step 1: Configure Your Developer Account
+
+1. Sign in to [App Store Connect](https://appstoreconnect.apple.com)
+2. Create a new app record for each platform:
+   - Click **My Apps** → **+** → **New App**
+   - **Platforms**: Select iOS or macOS
+   - **Name**: Airmail2Hookmark
+   - **Primary Language**: English
+   - **Bundle ID**: Register new bundle IDs at [Certificates, Identifiers & Profiles](https://developer.apple.com/account/resources/identifiers/list):
+     - macOS: `com.yourname.airmail2hookmark`
+     - iOS: `com.yourname.airmail2hookmark.ios`
+   - **SKU**: Any unique identifier (e.g., `airmail2hookmark-macos`)
+
+### Step 2: Update Bundle Identifiers
+
+In Xcode, update the bundle identifiers to match your registered IDs:
+
+1. Select the project in the navigator
+2. For each target (Airmail2Hookmark and Airmail2HookmarkiOS):
+   - Go to **Signing & Capabilities**
+   - Select your paid developer team
+   - Update **Bundle Identifier** to match your registered ID
+
+### Step 3: Prepare App Store Metadata
+
+You'll need to provide in App Store Connect:
+
+- **Description**:
+  > Airmail2Hookmark intercepts airmail: URLs and redirects them to Hookmark or Apple Mail, letting you migrate away from Airmail without breaking your existing email links.
+
+- **Keywords**: airmail, hookmark, email, url, redirect, migration, links
+
+- **Category**: Utilities
+
+- **Screenshots**: Required for each device size
+  - macOS: 1280x800 or 1440x900
+  - iPhone 6.7": 1290x2796
+  - iPhone 6.5": 1284x2778
+  - iPad 12.9": 2048x2732
+
+- **Privacy Policy URL**: Host `PRIVACY.md` somewhere public (e.g., as a GitHub gist or on your website)
+
+- **Support URL**: Your GitHub repository URL
+
+### Step 4: Archive and Upload
+
+**For macOS:**
+```
+1. Select scheme: Airmail2Hookmark
+2. Select destination: Any Mac
+3. Product → Archive
+4. In Organizer: Distribute App → App Store Connect → Upload
+```
+
+**For iOS:**
+```
+1. Select scheme: Airmail2HookmarkiOS
+2. Select destination: Any iOS Device
+3. Product → Archive
+4. In Organizer: Distribute App → App Store Connect → Upload
+```
+
+### Step 5: Submit for Review
+
+In App Store Connect:
+
+1. Select your app
+2. Click **+ Version** or edit the current version
+3. Fill in "What's New" (for updates)
+4. Select the uploaded build
+5. Complete the **App Review Information**:
+   - **Notes for Review**:
+     > This app handles airmail: URL schemes to help users migrate from Airmail email client. It redirects these URLs to Hookmark or Apple Mail. To test: create a link like airmail://message?messageid=test123 and open it after installing the app.
+6. Click **Submit for Review**
+
+### Step 6: TestFlight (Optional)
+
+For beta testing before public release:
+
+1. In App Store Connect, go to your app → **TestFlight**
+2. Select a build and add yourself as an internal tester
+3. Install the TestFlight app on your iOS device
+4. Open the TestFlight invitation to install
+
+**TestFlight advantages:**
+- No Developer Mode required on devices
+- Apps last 90 days (vs 7 days for direct Xcode installs)
+- Easy to distribute to testers
+
+### Review Timeline
+
+- **Typical review time**: 24-48 hours
+- **Common approval issues** (shouldn't apply here):
+  - Crashes or bugs
+  - Incomplete metadata
+  - Privacy policy issues
+- The app should pass review as it provides clear utility and uses only public APIs
+
+---
+
 ## URL Transformation
 
 The app transforms Airmail URLs to either Hookmark or Apple Mail format:
@@ -271,6 +380,10 @@ This utility works with any email client that Hookmark supports, including:
 When using Apple Mail mode, emails are opened directly in Apple Mail without requiring Hookmark.
 
 ---
+
+## Privacy
+
+Airmail2Hookmark does not collect, store, or transmit any personal data. See [PRIVACY.md](PRIVACY.md) for the full privacy policy.
 
 ## License
 

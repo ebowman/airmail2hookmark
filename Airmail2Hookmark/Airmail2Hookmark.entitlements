@@ -2,10 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <!-- App Sandbox - Disabled for URL scheme handling -->
-    <!-- Note: If you need to distribute via Mac App Store, enable sandbox -->
-    <!-- and add required entitlements -->
+    <!-- App Sandbox - Required for Mac App Store -->
     <key>com.apple.security.app-sandbox</key>
-    <false/>
+    <true/>
 </dict>
 </plist>

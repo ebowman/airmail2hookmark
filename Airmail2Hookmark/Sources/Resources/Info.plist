@@ -55,7 +55,7 @@
 
     <!-- Human-Readable Copyright -->
     <key>NSHumanReadableCopyright</key>
-    <string>Copyright 2024. All rights reserved.</string>
+    <string>Copyright 2026. All rights reserved.</string>
 
     <!-- Required for macOS App -->
     <key>LSApplicationCategoryType</key>
