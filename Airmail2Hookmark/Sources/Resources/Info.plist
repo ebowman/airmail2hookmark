@@ -22,6 +22,10 @@
     <key>CFBundleInfoDictionaryVersion</key>
     <string>6.0</string>
 
+    <!-- App Icon -->
+    <key>CFBundleIconName</key>
+    <string>AppIcon</string>
+
     <!-- App Configuration -->
     <key>LSMinimumSystemVersion</key>
     <string>$(MACOSX_DEPLOYMENT_TARGET)</string>
