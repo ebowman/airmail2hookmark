@@ -69,5 +69,9 @@
     <!-- Human-Readable Copyright -->
     <key>NSHumanReadableCopyright</key>
     <string>Copyright 2026. All rights reserved.</string>
+
+    <!-- App Store Export Compliance -->
+    <key>ITSAppUsesNonExemptEncryption</key>
+    <false/>
 </dict>
 </plist>

@@ -60,5 +60,9 @@
     <!-- Required for macOS App -->
     <key>LSApplicationCategoryType</key>
     <string>public.app-category.utilities</string>
+
+    <!-- App Store Export Compliance -->
+    <key>ITSAppUsesNonExemptEncryption</key>
+    <false/>
 </dict>
 </plist>
